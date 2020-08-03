@@ -114,7 +114,7 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr &viewer, ProcessPointCloud
 
     renderPointCloud(viewer, filteredCloud, "Filtered Cloud");
 
-    const std::pair<pcl::PointCloud<pcl::PointXYZI>::Ptr, pcl::PointCloud<pcl::PointXYZI>::Ptr> segmentCloud = pointProcessor->RansacPlane(filteredCloud, 20, 0.2);
+    std::pair<pcl::PointCloud<pcl::PointXYZI>::Ptr, pcl::PointCloud<pcl::PointXYZI>::Ptr> segmentCloud = pointProcessor->RansacPlane(filteredCloud, 20, 0.2);
 
     if (segmentCloud.first->empty() || segmentCloud.second->empty()) { return; }
 
@@ -129,19 +129,21 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr &viewer, ProcessPointCloud
     int clusterId{ 0 }, colorIndex{ 0 };
 
     const std::vector<Color> colors{ Color(1, 0, 1), Color(0, 1, 1), Color(1, 1, 0) };
-
+    bool renderBoundingBox = true;
     for (pcl::PointCloud<pcl::PointXYZI>::Ptr cluster : cloudClusters)
     {
-        renderPointCloud(viewer, cluster, "bstCloud" + std::to_string(clusterId), colors.at(colorIndex));
+        renderPointCloud(viewer, cluster, "obstCloud" + std::to_string(clusterId), colors.at(colorIndex));
 
-        Box box(pointProcessor->BoundingBox(cluster));
-        renderBox(viewer, box, clusterId);
-
+        if(renderBoundingBox)
+        {
+          Box box(pointProcessor->BoundingBox(cluster));
+          renderBox(viewer, box, clusterId);
+        }
         ++clusterId;
         ++colorIndex;
-
         colorIndex %= colors.size();
     }
+    
 }
 
 int main (int argc, char** argv)
@@ -151,7 +153,13 @@ int main (int argc, char** argv)
     pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
     CameraAngle setAngle = XY;
     initCamera(setAngle, viewer);
-    //simpleHighway(viewer);
+    /*
+    simpleHighway(viewer);
+    while(!viewer->wasStopped())
+    {
+      viewer->spinOnce();
+    }
+    */
 
 
     // pcd stream
@@ -173,4 +181,5 @@ int main (int argc, char** argv)
         }
         viewer->spinOnce();
     }
+
 }

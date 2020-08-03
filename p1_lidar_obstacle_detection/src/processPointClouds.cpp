@@ -185,3 +185,119 @@ std::vector<boost::filesystem::path> ProcessPointClouds<PointT>::streamPcd(std::
     return paths;
 
 }
+
+//TODO
+template <typename PointT>
+std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT>::Ptr>
+ProcessPointClouds<PointT>::RansacPlane(typename pcl::PointCloud<PointT>::Ptr cloud, int maxIterations,
+                                        const float distanceTol) {
+
+    std::unordered_set<int> inliersResult;
+
+    // TODO: Fill in this function
+    srand(time(NULL));
+
+    while (maxIterations--) {
+
+        std::unordered_set<int> inliers; // temporary map
+
+        // insert three random indicies
+        for (int i{ 0 }; i < 3; i++) { inliers.insert(rand() % cloud->points.size()); }
+
+        auto iterator{ std::begin(inliers) };
+
+        const float x1{ cloud->points.at((*iterator)).x };
+        const float y1{ cloud->points.at((*iterator)).y };
+        const float z1{ cloud->points.at((*iterator)).z };
+
+        ++iterator;
+
+        const float x2{ cloud->points.at((*iterator)).x };
+        const float y2{ cloud->points.at((*iterator)).y };
+        const float z2{ cloud->points.at((*iterator)).z };
+
+        // I have ABSOLUTELY no clue why the map was sometimes only inserting 2 indices
+        // I shouldn't have to do this, but a seg fault was occurring without this check
+        if (inliers.size() == 2) { inliers.insert(rand() % cloud->points.size()); }
+
+        ++iterator;
+
+        const float x3{ cloud->points.at((*iterator)).x };
+        const float y3{ cloud->points.at((*iterator)).y };
+        const float z3{ cloud->points.at((*iterator)).z };
+
+        const float i{ static_cast<float>(((y2 - y1) * (z3 - z1)) - ((z2 - z1) * (y3 - y1))) };
+        const float j{ static_cast<float>(((z2 - z1) * (x3 - x1)) - ((x2 - x1) * (z3 - z1))) };
+        const float k{ static_cast<float>(((x2 - x1) * (y3 - y1)) - ((y2 - y1) * (x3 - x1))) };
+
+        // yeah, it's stupid, but it helps with following the given equations
+        const float A{ i }, B{ j }, C{ k };
+
+        const float D{ static_cast<float>(-((i * x1) + (j * y1) + (k * z1))) };
+
+        const float euclideanDist{ std::sqrt((A * A) + (B * B) + (C * C)) };
+
+        for (int index{ 0 }; index < cloud->points.size(); index++) {
+            const float plane{ std::fabs((A * cloud->points.at(index).x) + (B * cloud->points.at(index).y) +
+                                         (C * cloud->points.at(index).z) + D) };
+
+            if ((plane / euclideanDist) <= distanceTol) { inliers.insert(index); }
+        }
+
+        if (inliers.size() > inliersResult.size()) { inliersResult = inliers; }
+    }
+
+    typename pcl::PointCloud<PointT>::Ptr cloudInliers{ new pcl::PointCloud<PointT>() };
+    typename pcl::PointCloud<PointT>::Ptr cloudOutliers{ new pcl::PointCloud<PointT>() };
+
+    if (!inliersResult.empty()) {
+        for (int index{ 0 }; index < cloud->points.size(); index++) {
+            const PointT point{ cloud->points.at(index) };
+
+            if (inliersResult.count(index)) {
+                cloudInliers->points.push_back(point);
+            } else {
+                cloudOutliers->points.push_back(point);
+            }
+        }
+    }
+
+    return std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT>::Ptr>(
+        cloudOutliers, cloudInliers);
+}
+
+template <typename PointT>
+void ProcessPointClouds<PointT>::proximity(const std::vector<std::vector<float>> &points,
+                                           std::vector<int> &cluster, std::vector<bool> &processed,
+                                           const int index, const float tolerance, KdTree *tree) {
+
+    processed.at(index) = true;
+    cluster.push_back(index);
+
+    const std::vector<int> nearbyPoints{ tree->search(points.at(index), tolerance) };
+
+    for (int nearbyIndex : nearbyPoints) {
+        if (!processed.at(nearbyIndex)) {
+            proximity(points, cluster, processed, nearbyIndex, tolerance, tree);
+        }
+    }
+}
+
+template <typename PointT>
+std::vector<std::vector<int>>
+ProcessPointClouds<PointT>::euclideanCluster(const std::vector<std::vector<float>> &points, KdTree *tree,
+                                             float distanceTol) {
+
+    std::vector<std::vector<int>> clusters;
+    std::vector<bool> processed(points.size(), false);
+
+    for (int i{ 0 }; i < points.size(); i++) {
+        if (!processed.at(i)) {
+            std::vector<int> cluster;
+            proximity(points, cluster, processed, i, distanceTol, tree);
+            clusters.push_back(cluster);
+        }
+    }
+
+    return clusters;
+}

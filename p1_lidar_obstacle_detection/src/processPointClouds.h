@@ -18,6 +18,9 @@
 #include <ctime>
 #include <chrono>
 #include "render/box.h"
+//TODO
+#include <unordered_set>
+#include "quiz/cluster/kdtree.h"
 
 template<typename PointT>
 class ProcessPointClouds {
@@ -49,6 +52,10 @@ public:
     // TODO
     std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT>::Ptr> 
       RansacPlane(typename pcl::PointCloud<PointT>::Ptr cloud, int maxIterations, float distanceTol);
+    void proximity(const std::vector<std::vector<float>> &points, std::vector<int> &cluster,
+                   std::vector<bool> &processed, const int index, const float tolerance, KdTree *tree);
+    std::vector<std::vector<int>> euclideanCluster(const std::vector<std::vector<float>> &points,
+                                                   KdTree *tree, float distanceTol);
 
 };
 #endif /* PROCESSPOINTCLOUDS_H_ */

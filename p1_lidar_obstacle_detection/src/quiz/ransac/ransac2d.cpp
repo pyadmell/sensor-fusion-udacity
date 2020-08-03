@@ -121,7 +121,6 @@ while (maxIterations--) {
 std::unordered_set<int> RansacPlane(typename pcl::PointCloud<pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, int maxIterations, float distanceTol)
 {
   std::unordered_set<int> inliersResult;
-
   srand(time(NULL));
 
   // TODO: Fill in this function
@@ -192,7 +191,7 @@ int main ()
   std::unordered_set<int> inliers = RansacPlane(cloud,50,0.25);
 
 
-	pcl::PointCloud<pcl::PointXYZ>::Ptr  cloudInliers(new pcl::PointCloud<pcl::PointXYZ>());
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloudInliers(new pcl::PointCloud<pcl::PointXYZ>());
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloudOutliers(new pcl::PointCloud<pcl::PointXYZ>());
 
 	for(int index = 0; index < cloud->points.size(); index++)
@@ -210,15 +209,14 @@ int main ()
 	{
 		renderPointCloud(viewer,cloudInliers,"inliers",Color(0,1,0));
   		renderPointCloud(viewer,cloudOutliers,"outliers",Color(1,0,0));
-	}
-  	else
-  	{
-  		renderPointCloud(viewer,cloud,"data");
-  	}
-	
-  	while (!viewer->wasStopped ())
-  	{
-  	  viewer->spinOnce ();
-  	}
+	} else
+  {
+    renderPointCloud(viewer,cloud,"data");
+  }
+  
+  while (!viewer->wasStopped ())
+  {
+    viewer->spinOnce ();
+  }
   	
 }
