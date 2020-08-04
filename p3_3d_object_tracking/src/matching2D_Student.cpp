@@ -51,7 +51,7 @@ void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::Key
         float threshold = 0.8;
         for (const auto match: knnMatches) 
         {
-            if ((match[0].distance < (threshold * match[1].distance))
+            if (match[0].distance < (threshold * match[1].distance))
             {
                 matches.push_back(match[0]);
             }
