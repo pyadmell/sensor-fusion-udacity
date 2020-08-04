@@ -111,7 +111,7 @@ int main(int argc, const char *argv[])
             {
                 if (vehicleRect.contains(point.pt))
                 {
-                    keypoints_roi.push_back(point);
+                    roiKeypoints.push_back(point);
                 }
             }
             keypoints = roiKeypoints;
