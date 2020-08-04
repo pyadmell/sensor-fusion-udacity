@@ -131,9 +131,35 @@ void show3DObjects(std::vector<BoundingBox> &boundingBoxes, cv::Size worldSize, 
 
 
 // associate a given bounding box with the keypoints it contains
+// STUDENT ASSIGMENT
 void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPoint> &kptsCurr, std::vector<cv::DMatch> &kptMatches)
 {
-    // ...
+    std::vector<double> distance;
+    for(const auto &point: kptMatches)
+    {
+        if (boundingBox.roi.contains(kptsCurr[point.trainIdx].pt))
+        {
+            auto &kptPrev = kptsPrev[point.queryId];
+            distance.push_back(cv::norm(kptCurr.pt - kptPrev.pt));
+        }
+	  }
+
+    double meanDistance = std::accumulate(distance.begin(), distance.end(), 0.0)/distance.size();
+
+    for (const auto &point: kptMatches)
+    {
+        auto &kptCurr = kptsCurr[point.trainIdx];
+        if (boundingBox.roi.contains(kptCurr.pt))
+        { 
+            int kptPrevIdx = point.queryIdx;
+            auto &kptPrev = kptsPrev[kptPrevIdx];
+            if (cv::norm(kptCurr.pt - kptPrev.pt) < 1.3*meanDistance)
+            {
+                boundingBox.keypoints.push_back(kptCurr);
+                boundingBox.kptMatches.push_back(point);
+            }
+        }
+    }
 }
 
 
@@ -141,7 +167,50 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
 void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPoint> &kptsCurr, 
                       std::vector<cv::DMatch> kptMatches, double frameRate, double &TTC, cv::Mat *visImg)
 {
-    // ...
+    std::vector<double> distRatios;
+    double minDistance = 100.0; // Minimum required distance
+
+    for (auto outerKptMatch{ begin(kptMatches) }; outerKptMatch != end(kptMatches) - 1; ++outerKptMatch) {
+        const cv::KeyPoint kpOuterCurr{ kptsCurr.at(outerKptMatch->trainIdx) };
+        const cv::KeyPoint kpOuterPrev{ kptsPrev.at(outerKptMatch->queryIdx) };
+
+        for (auto innerKptMatch{ begin(kptMatches) + 1 }; innerKptMatch != end(kptMatches); ++innerKptMatch) {
+            // get next keypoint and its matched partner in the prev. frame
+            cv::KeyPoint kpInnerCurr = kptsCurr.at(innerKptMatch->trainIdx);
+            cv::KeyPoint kpInnerPrev = kptsPrev.at(innerKptMatch->queryIdx);
+
+            // compute distances and distance ratios
+            const double distCurr{ cv::norm(kpOuterCurr.pt - kpInnerCurr.pt) };
+            const double distPrev{ cv::norm(kpOuterPrev.pt - kpInnerPrev.pt) };
+
+            if (distPrev > std::numeric_limits<double>::epsilon() && distCurr >= minDist) {
+                const double distRatio{ distCurr / distPrev };
+                distRatios.push_back(distRatio);
+            }
+        }
+    }
+
+    if (distRatios.empty()) {
+        TTC = NAN;
+        return;
+    }
+
+    std::sort(begin(distRatios), end(distRatios));
+
+    const long medIndex{ static_cast<long>(std::floor(distRatios.size() / 2.0)) };
+
+    // compute median dist. ratio to remove outlier influence
+    double medDistRatio;
+
+    if (distRatios.size() % 2 == 0) {
+        medDistRatio = (distRatios.at(medIndex - 1) + distRatios.at(medIndex)) / 2.0;
+    } else {
+        medDistRatio = distRatios.at(medIndex);
+    }
+
+    const double dT{ 1 / frameRate };
+
+    TTC = -dT / (1 - medDistRatio);
 }
 
 
@@ -156,3 +225,4 @@ void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bb
 {
     // ...
 }
+// EOF STUDENT ASSIGNMENT
