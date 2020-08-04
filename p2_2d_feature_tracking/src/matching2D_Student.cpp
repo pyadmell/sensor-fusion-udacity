@@ -47,11 +47,30 @@ void descKeypoints(vector<cv::KeyPoint> &keypoints, cv::Mat &img, cv::Mat &descr
         float patternScale = 1.0f; // apply this scale to the pattern used for sampling the neighbourhood of a keypoint.
 
         extractor = cv::BRISK::create(threshold, octaves, patternScale);
+    } //MP.4
+    else if (descriptorType.compare("BRIEF") == 0)
+    {
+        extractor = cv::xfeatures2d::BriefDescriptorExtractor::create();
+    }
+    else if (descriptorType.compare("ORB") == 0)
+    {
+        extractor = cv::ORB::create();
+    }
+    else if (descriptorType.compare("FREAK") == 0)
+    {
+        extractor = cv::xfeatures2d::FREAK::create();
+    }
+    else if (descriptorType.compare("AKAZE") == 0)
+    {
+        extractor = cv::AKAZE::create();
+    }
+    else if (descriptorType.compare("SIFT") == 0)
+    {
+        extractor = cv::xfeatures2d::SIFT::create();
     }
     else
     {
-
-        //...
+        std::cout<<"Invalid descriptor!"<<std::endl;
     }
 
     // perform feature description
