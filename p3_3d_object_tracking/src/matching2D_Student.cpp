@@ -1,4 +1,3 @@
-
 #include <numeric>
 #include "matching2D.hpp"
 
@@ -19,7 +18,20 @@ void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::Key
     }
     else if (matcherType.compare("MAT_FLANN") == 0)
     {
-        // ...
+        // STUDENT TASK: MP.5
+        // Convert binary descriptors to floating point
+        if (descSource.type() != CV_32F)
+        { 
+            descSource.convertTo(descSource, CV_32F);
+        }
+
+        if(descRef.type() != CV_32F)
+        {
+            descRef.convertTo(descRef, CV_32F);
+        }
+
+        matcher = cv::DescriptorMatcher::create(cv::DescriptorMatcher::FLANNBASED);
+        // EOF STUDENT TASK
     }
 
     // perform matching task
@@ -30,8 +42,21 @@ void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::Key
     }
     else if (selectorType.compare("SEL_KNN") == 0)
     { // k nearest neighbors (k=2)
-
-        // ...
+        // STUDENT TASK: MP.5
+        std::vector<std::vector<cv::DMatch>> knnMatches;
+        matcher->knnMatch(descSource, descRef, knnMatches, 2);
+        // EOF STUDENT TASK
+        
+        // STUDENT TASK: MP.6
+        float threshold = 0.8;
+        for (const auto match: knnMatches) 
+        {
+            if ((match[0].distance < (threshold * match[1].distance))
+            {
+                matches.push_back(match[0]);
+            }
+        }
+        // EOF STUDENT TASK
     }
 }
 
@@ -48,12 +73,33 @@ void descKeypoints(vector<cv::KeyPoint> &keypoints, cv::Mat &img, cv::Mat &descr
         float patternScale = 1.0f; // apply this scale to the pattern used for sampling the neighbourhood of a keypoint.
 
         extractor = cv::BRISK::create(threshold, octaves, patternScale);
+    } 
+    // STUDENT TASK: MP.4
+    else if (descriptorType.compare("BRIEF") == 0)
+    {
+        extractor = cv::xfeatures2d::BriefDescriptorExtractor::create();
+    }
+    else if (descriptorType.compare("ORB") == 0)
+    {
+        extractor = cv::ORB::create();
+    }
+    else if (descriptorType.compare("FREAK") == 0)
+    {
+        extractor = cv::xfeatures2d::FREAK::create();
+    }
+    else if (descriptorType.compare("AKAZE") == 0)
+    {
+        extractor = cv::AKAZE::create();
+    }
+    else if (descriptorType.compare("SIFT") == 0)
+    {
+        extractor = cv::xfeatures2d::SIFT::create();
     }
     else
     {
-
-        //...
+        std::cout<<"Invalid descriptor!"<<std::endl;
     }
+    // EOF STUDENT TASK
 
     // perform feature description
     double t = (double)cv::getTickCount();
