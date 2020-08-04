@@ -83,11 +83,18 @@ int main(int argc, const char *argv[])
 
         if (detectorType.compare("SHITOMASI") == 0)
         {
+            // SHITOMASI
             detKeypointsShiTomasi(keypoints, imgGray, false);
+        }
+        else if (detectorType.compare("HARRIS") == 0)
+        {
+            // HARRIS
+            detKeypointsHarris(keypoints, imgGray, false);
         }
         else
         {
-            //...
+            // Other methods: FAST, BRISK, ORB, AKAZE, SIFT
+            detKeypointsModern(keypoints, imgGray, detectorType, false);
         }
         //// EOF STUDENT ASSIGNMENT
 
