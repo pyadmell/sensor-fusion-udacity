@@ -1,14 +1,19 @@
+%% Project Layout
+% <<project_layout.png>>
+
 clear all
 close all
 clc;
 
 %% Radar Specifications 
+% <<system_requirement.png>>
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Frequency of operation = 77GHz
 % Max Range = 200m
 % Range Resolution = 1 m
 % Max Velocity = 100 m/s
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 %speed of light = 3e8
 %% User Defined Range and Velocity of target
