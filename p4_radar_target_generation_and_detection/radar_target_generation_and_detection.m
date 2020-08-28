@@ -65,6 +65,8 @@ td=zeros(1,length(t));
 
 
 %% Signal generation and Moving Target simulation
+% <<signal_propagation.png>>
+%
 % Running the radar scenario over the time. 
 
 for i=1:length(t)         
@@ -233,7 +235,3 @@ RDM(:,union(1:(Td+Gd),cols-(Td+Gd-1):cols)) = 0;
 figure('Name','The output of the 2D CFAR process')
 surf(doppler_axis,range_axis,RDM);
 colorbar;
-
-
- 
- 

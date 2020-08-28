@@ -17,15 +17,18 @@ Project Layout
 
 ![](project_layout.png)
 
+```
 clear all
 close all
 clc;
+```
 
 Radar Specifications
 --------------------
 
 ![](system_requirement.png)
 
+```
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Frequency of operation = 77GHz
 % Max Range = 200m
@@ -34,18 +37,22 @@ Radar Specifications
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %speed of light = 3e8
+```
 
 User Defined Range and Velocity of target
 -----------------------------------------
 
+```
 **%TODO** : define the target's initial position and velocity. Note : Velocity remains contant
 
 R = 150;
 v = 10;
+```
 
 FMCW Waveform Generation
 ------------------------
 
+```
 % \*%TODO\* :
 %Design the FMCW waveform by giving the specs of each of its parameters.
 % Calculate the Bandwidth (B), Chirp Time (Tchirp) and Slope (slope) of the FMCW
@@ -81,6 +88,7 @@ Mix = zeros(1,length(t)); %beat signal
 %Similar vectors for range\_covered and time delay.
 r\_t=zeros(1,length(t));
 td=zeros(1,length(t));
+```
 
 Signal generation and Moving Target simulation
 ----------------------------------------------
@@ -89,6 +97,7 @@ Signal generation and Moving Target simulation
 
 Running the radar scenario over the time.
 
+```
 for i=1:length(t)
 
 
@@ -109,10 +118,12 @@ for i=1:length(t)
     %Receiver Signal
     Mix(i) = Tx(i).\*Rx(i);
 end
+```
 
 RANGE MEASUREMENT
 -----------------
 
+```
  % \*%TODO\* :
 %reshape the vector into Nr\*Nd array. Nr and Nd here would also define the size of
 %Range and Doppler FFT respectively.
@@ -143,6 +154,7 @@ plot(sig\_fft);
 axis (\[0 200 0 1\]);
 ylabel('Normalized Amplitude');
 xlabel('Range \[m\]');
+```
 
 ![](radar_target_generation_and_detection_01.png)
 
@@ -151,6 +163,7 @@ RANGE DOPPLER RESPONSE
 
 The 2D FFT implementation is already provided here. This will run a 2DFFT on the mixed signal (beat signal) output and generate a range doppler map.You will implement CFAR on the generated RDM
 
+```
 % Range Doppler Map Generation.
 
 % The output of the 2D FFT is an image that has reponse in the range and
@@ -174,12 +187,14 @@ doppler\_axis = linspace(-100,100,Nd);
 range\_axis = linspace(-200,200,Nr/2)\*((Nr/2)/400);
 figure('Name','2D FFT output - Range Doppler Map');
 surf(doppler\_axis,range\_axis,RDM);
+```
 
 ![](radar_target_generation_and_detection_02.png)
 
 CFAR implementation
 -------------------
 
+```
 %Slide Window through the complete Range Doppler Map
 
 % \*%TODO\* :
@@ -253,6 +268,7 @@ RDM(:,union(1:(Td+Gd),cols-(Td+Gd-1):cols)) = 0;
 figure('Name','The output of the 2D CFAR process')
 surf(doppler\_axis,range\_axis,RDM);
 colorbar;
+```
 
 ![](radar_target_generation_and_detection_03.png)
 

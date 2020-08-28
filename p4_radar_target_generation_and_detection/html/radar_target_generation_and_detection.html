@@ -118,7 +118,7 @@ Mix = zeros(1,length(t)); <span class="comment">%beat signal</span>
 <span class="comment">%Similar vectors for range_covered and time delay.</span>
 r_t=zeros(1,length(t));
 td=zeros(1,length(t));
-</pre><h2 id="5">Signal generation and Moving Target simulation</h2><p>Running the radar scenario over the time.</p><pre class="codeinput"><span class="keyword">for</span> i=1:length(t)
+</pre><h2 id="5">Signal generation and Moving Target simulation</h2><p><img vspace="5" hspace="5" src="signal_propagation.png" alt=""> </p><p>Running the radar scenario over the time.</p><pre class="codeinput"><span class="keyword">for</span> i=1:length(t)
 
 
     <span class="comment">% *%TODO* :</span>
@@ -338,6 +338,8 @@ td=zeros(1,length(t));
 
 
 %% Signal generation and Moving Target simulation
+% <<signal_propagation.png>>
+%
 % Running the radar scenario over the time. 
 
 for i=1:length(t)         
