@@ -85,7 +85,3 @@ struct KdTree
 	
 
 };
-
-
-
-
