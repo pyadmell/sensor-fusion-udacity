@@ -101,34 +101,51 @@ void initCamera(CameraAngle setAngle, pcl::visualization::PCLVisualizer::Ptr& vi
         viewer->addCoordinateSystem (1.0);
 }
 
-void cityBlock(pcl::visualization::PCLVisualizer::Ptr &viewer, ProcessPointClouds<pcl::PointXYZI> *pointProcessorI, 
+void cityBlock(pcl::visualization::PCLVisualizer::Ptr &viewer, ProcessPointClouds<pcl::PointXYZI> *pointProcessor, 
     const pcl::PointCloud<pcl::PointXYZI>::Ptr &inputCloud) {
-
-    ProcessPointClouds<pcl::PointXYZI> *pointProcessor = new ProcessPointClouds<pcl::PointXYZI>();
+    // filter point cloud
     float X = 30.0;
-    float Y = 6.5;
-    float Z = 2.5;
-
+    float Y = 6.0;
+    float Z = 3.0;
     pcl::PointCloud<pcl::PointXYZI>::Ptr filteredCloud = pointProcessor->FilterCloud(inputCloud, 0.1, 
-        Eigen::Vector4f(-(X/2),-Y,-Z,1),Eigen::Vector4f(X,Y,Z,1));
-
+        Eigen::Vector4f(-X,-Y,-Z,1),Eigen::Vector4f(X,Y,Z,1));
+    
+    // render filtered point cloud
     renderPointCloud(viewer, filteredCloud, "Filtered Cloud");
 
-    std::pair<pcl::PointCloud<pcl::PointXYZI>::Ptr, pcl::PointCloud<pcl::PointXYZI>::Ptr> segmentCloud = pointProcessor->RansacPlane(filteredCloud, 20, 0.2);
+    // segment point cloud into obstacles and plane
+    bool usePclSegmentation = false;
+    int maxIterations = 50;
+    float distanceTol = 0.3;
+    std::pair<pcl::PointCloud<pcl::PointXYZI>::Ptr, pcl::PointCloud<pcl::PointXYZI>::Ptr> segmentCloud;
+    if(!usePclSegmentation) {
+      segmentCloud = pointProcessor->RansacPlane(filteredCloud, maxIterations, distanceTol);
+    } else {
+      segmentCloud = pointProcessor->SegmentPlane(filteredCloud, maxIterations, distanceTol);
+    }
 
-    if (segmentCloud.first->empty() || segmentCloud.second->empty()) { return; }
+    if (segmentCloud.first->empty() || segmentCloud.second->empty()) { 
+      std::cout<< "segmentation is empty" <<std::endl;
+      return; 
+    }
 
+    // render obstacles and plane
     renderPointCloud(viewer, segmentCloud.first, "Obstacle Cloud", Color(1, 0, 0));
     renderPointCloud(viewer, segmentCloud.second, "Plane Cloud", Color(0, 1, 0));
 
+    // cluster obstacle points
     const std::vector<pcl::PointCloud<pcl::PointXYZI>::Ptr> cloudClusters{ pointProcessor->Clustering(
-        segmentCloud.first, 0.35, 30, 1775) };
+        segmentCloud.first, 0.5, 10, 2500) };
 
-    if (cloudClusters.empty()) { return; }
+    if (cloudClusters.empty()){ 
+      std::cout<<"No cluster founds"<<std::endl;
+      return; 
+    }
 
-    int clusterId{ 0 }, colorIndex{ 0 };
-
-    const std::vector<Color> colors{ Color(1, 0, 1), Color(0, 1, 1), Color(1, 1, 0) };
+    // render bounding boxes
+    int clusterId = 0;
+    int colorIndex = 0;
+    const std::vector<Color> colors{ Color(1, 0, 0), Color(0, 0, 1), Color(1, 1, 0) };
     bool renderBoundingBox = true;
     for (pcl::PointCloud<pcl::PointXYZI>::Ptr cluster : cloudClusters)
     {
