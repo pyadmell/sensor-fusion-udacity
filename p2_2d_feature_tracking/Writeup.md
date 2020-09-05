@@ -1,6 +1,6 @@
 # Camera Based 2D Feature Tracking
 
-<img src="imgages/matched_keypoints.png" width="820" height="248" />
+<img src="images/matched_keypoints.png" width="820" height="248" />
 
 ## [Rubric Points](https://review.udacity.com/#!/rubrics/2549/view)
 ---
