@@ -57,7 +57,7 @@ int main(int argc, const char *argv[])
     for (size_t imgIndex = 0; imgIndex <= imgEndIndex - imgStartIndex; imgIndex++)
     {
         /* LOAD IMAGE INTO BUFFER */
-
+        double t = (double)cv::getTickCount();
         // assemble filenames for current index
         ostringstream imgNumber;
         imgNumber << setfill('0') << setw(imgFillWidth) << imgStartIndex + imgIndex;
@@ -107,6 +107,7 @@ int main(int argc, const char *argv[])
             // Other methods: FAST, BRISK, ORB, AKAZE, SIFT
             detKeypointsModern(keypoints, imgGray, detectorType, false);
         }
+        //std::cout<<keypoints.size()<<", ";
         //// EOF STUDENT ASSIGNMENT
 
         //// STUDENT ASSIGNMENT
@@ -127,7 +128,7 @@ int main(int argc, const char *argv[])
             }
             keypoints = roiKeypoints;
         }
-
+        //std::cout<<keypoints.size()<<", ";
         //// EOF STUDENT ASSIGNMENT
 
         // optional : limit number of keypoints (helpful for debugging and learning)
@@ -180,7 +181,9 @@ int main(int argc, const char *argv[])
             matchDescriptors((dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints,
                              (dataBuffer.end() - 2)->descriptors, (dataBuffer.end() - 1)->descriptors,
                              matches, descriptorType, matcherType, selectorType);
-
+            //std::cout<<matches.size()<<", ";
+            t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
+            //std::cout<<1000*t<<", ";
             //// EOF STUDENT ASSIGNMENT
 
             // store matches in current data frame
