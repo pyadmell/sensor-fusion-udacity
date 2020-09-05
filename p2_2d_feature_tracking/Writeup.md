@@ -255,8 +255,8 @@ for (const auto match: knnMatches)
 
 Detector  | Number of keypoints
 --------  | -------------------
-SHITOMASI | x-x
-HARRIS    | x-x
+SHITOMASI | 1284-1380
+HARRIS    | 
 FAST      | x-x
 BRISK     | x-x
 ORB       | x-x
