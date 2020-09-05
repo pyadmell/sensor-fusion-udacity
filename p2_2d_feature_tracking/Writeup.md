@@ -348,8 +348,10 @@ SIFT | ORB | 82.05 | 1.00
 SIFT | FREAK | 97.50 | 3.78
 SIFT | SIFT | 92.53 | 1.32
 
-Rank  |  Detector-Descriptor | Avg. Number of Keypoints | Avg. Time (ms)
------ | -------------------- | ------------------------ | --------
-1     | x-x                  | x                        | x
-2     | x-x                  | x                        | x 
-3     | x-x                  | x                        | x
+- FAST, BRISK, and AKAZE detectors overall result in greater number of matched keypoints between successive images compared to other detectors. However, Fast detection is signifacantly quicker method. Considering different detector-descriptor combinations, the following combinations are selected as the top 3 combinations considering the number of mathced keypoints and average processing time:
+
+Rank  |  Detector | Descriptor | Avg. Number of Keypoints | Avg. Time (ms)
+----- | --------- | -------- | ------------------------ | --------
+1     | FAST      | BRIEF    | 122                      | 6.55
+2     | FAST      | ORB      | 119                      | 6.52
+3     | FAST      | SIFT     | 247                      | 17.73
