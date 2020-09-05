@@ -275,37 +275,31 @@ SHITOMASI | BRIEF       | 105                              | 5
 SHITOMASI | ORB         | 101                              | 3
 SHITOMASI | FREAK       | 85                               | 3
 SHITOMASI | SIFT        | 88                               | 5
-
 HARRIS    | BRISK       | 13                               | 4
 HARRIS    | BRIEF       | 16                               | 3
 HARRIS    | ORB         | 16                               | 4
 HARRIS    | FREAK       | 14                               | 3
 HARRIS    | SIFT        | 18                               | 5
-
 FAST      | BRISK       | 100                              | 7
 FAST      | BRIEF       | 122                              | 7
 FAST      | ORB         | 119                              | 6
 FAST      | FREAK       | 98                               | 6
 FAST      | SIFT        | 247                              | 10
-
 BRISK     | BRISK       | 174                              | 9
 BRISK     | BRIEF       | 189                              | 11
 BRISK     | ORB         | 168                              | 8
 BRISK     | FREAK       | 169                              | 9
 BRISK     | SIFT        | 151                              | 10
-
 ORB       | BRISK       | 83                               | 7
 ORB       | BRIEF       | 61                               | 14
 ORB       | ORB         | 85                               | 12
 ORB       | FREAK       | 47                               | 6
 ORB       | SIFT        | 57                               | 10
-
 AKAZE     | BRISK       | 135                              | 8
 AKAZE     | BRIEF       | 141                              | 9
 AKAZE     | ORB         | 131                              | 8
 AKAZE     | FREAK       | 132                              | 9
 AKAZE     | SIFT        | 120                              | 11
-
 SIFT      | BRISK       | 66                               | 6
 SIFT      | BRIEF       | 78                               | 7
 SIFT      | ORB         | 61                               | 6
