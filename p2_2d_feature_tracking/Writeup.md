@@ -255,13 +255,13 @@ for (const auto match: knnMatches)
 
 Detector  | Number of keypoints
 --------  | -------------------
-SHITOMASI | 1284-1380
-HARRIS    | 
-FAST      | x-x
-BRISK     | x-x
-ORB       | x-x
-AKAZE     | x-x
-SIFT      | x-x
+SHITOMASI | 1284-1389
+HARRIS    | 244-267
+FAST      | 1695-1832
+BRISK     | 2628-2777
+ORB       | 500-500
+AKAZE     | 1311-1363
+SIFT      | 1303-1462
 
 #### MP.8 Performance Evaluation 2
 - Count the number of matched keypoints for all 10 images using all possible combinations of detectors and descriptors. In the matching step, the BF approach is used with the descriptor distance ratio set to 0.8.
