@@ -201,16 +201,17 @@ void detKeypointsHarris(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, cons
     int apertureSize = 3;
     int minResponse = 100;
     double k = 0.04;
-    double overlapThreshold = 0.0;
-    int scaledApertureSize = 2*apertureSize;
-    cv::Mat dst, dstNorm, dstNormScaled;
-    dst = cv::Mat::zeros(img.size(), CV_32FC1);
-
+    
     double t = (double) cv::getTickCount();
+    cv::Mat dst;
+    cv::Mat dstNorm;
+    cv::Mat dstNormScaled;
+    dst = cv::Mat::zeros(img.size(), CV_32FC1);
     cv::cornerHarris(img, dst, blockSize, apertureSize, k, cv::BORDER_DEFAULT);
     cv::normalize(dst, dstNorm, 0, 255, cv::NORM_MINMAX, CV_32FC1, cv::Mat());
     cv::convertScaleAbs(dstNorm, dstNormScaled);
 
+    double overlapThreshold = 0.0;
     for (size_t i=0; i<dstNorm.rows; ++i) 
     {
         for (size_t j=0; j<dstNorm.cols; ++j) 
@@ -218,34 +219,34 @@ void detKeypointsHarris(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, cons
             int response = (int)dstNorm.at<float>(i,j);
             if (response > minResponse) 
             {
-                cv::KeyPoint point;
-                point.pt = cv::Point2f(i, j);
-                point.size = scaledApertureSize;
-                point.response = response;
-                point.class_id = 0;
+                cv::KeyPoint kp;
+                kp.pt = cv::Point2f(i, j);
+                kp.size = 2*apertureSize;
+                kp.response = response;
+                kp.class_id = 0;
                 bool isOverlapping = false;
-                for (auto &keypoint: keypoints) 
+                for (auto it=keypoints.begin(); it!=keypoints.end(); ++it) 
                 {
-                    if (cv::KeyPoint::overlap(point, keypoint) > overlapThreshold) 
+                    if (cv::KeyPoint::overlap(kp, *it) > overlapThreshold) 
                     {
                         isOverlapping = true;
-                        if (point.response > keypoint.response) 
+                        if (kp.response > (*it).response) 
                         {
-                            keypoint = point;
+                            *it = kp;
                             break;
                         }
                     }
                 }
                 if (!isOverlapping) 
                 { 
-                  keypoints.push_back(point); 
+                  keypoints.push_back(kp); 
                 }
             }
         }
     }
 
     t = ((static_cast<double>(cv::getTickCount())) - t) / cv::getTickFrequency();
-    std::cout << "Harris detection with n= " << keypoints.size() << " keypoints in " << 1000 * t / 1.0 << " ms" << std::endl;
+    std::cout << "HARRIS detection with n= " << keypoints.size() << " keypoints in " << 1000 * t / 1.0 << " ms" << std::endl;
     if (bVis)
     {
         cv::Mat visImage = img.clone();
