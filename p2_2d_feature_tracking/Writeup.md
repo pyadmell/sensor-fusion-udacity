@@ -252,57 +252,65 @@ for (const auto match: knnMatches)
 ---
 #### MP.7 Performance Evaluation 1
 - Count the number of keypoints on the preceding vehicle for all 10 images and take note of the distribution of their neighborhood size. Do this for all the detectors you have implemented.
+- Number of all keypoints and keypoints in ROI are provided in [MP_7_ALL.csv](MP_7_ALL.csv) and [MP_7_ROI.csv](MP_7_ROI.csv) files for each image. The following table summarize the results in terms of rounded average number ROI keypoints and standard deviation.
 
-Detector  | Number of keypoints
---------  | -------------------
-SHITOMASI | 1284-1389
-HARRIS    | 244-267
-FAST      | 1695-1832
-BRISK     | 2628-2777
-ORB       | 500-500
-AKAZE     | 1311-1363
-SIFT      | 1303-1462
+Detector  | AVG. number of keypoints | Standard deviation
+--------  | ------------------------ | -------------------
+SHITOMASI | 118                      | 5
+HARRIS    | 25                       | 9
+FAST      | 149                      | 5
+BRISK     | 276                      | 13
+ORB       | 116                      | 14
+AKAZE     | 167                      | 8
+SIFT      | 139                      | 9
 
 #### MP.8 Performance Evaluation 2
 - Count the number of matched keypoints for all 10 images using all possible combinations of detectors and descriptors. In the matching step, the BF approach is used with the descriptor distance ratio set to 0.8.
+- Number of matched keypoints for all images are provided in [MP_8.csv](MP_8.csv) files for each image. The following table summarize the results in terms of rounded average number matched keypoints and standard deviation.
 
-Detector  | Descriptor  | Number of matched keypoints
---------  | ----------- | ---------------------------
-SHITOMASI | BRISK       | 79-90
-HARRIS    | BRISK       | x-x
-FAST      | BRISK       | 85-107
-BRISK     | BRISK       | 156-188
-ORB       | BRISK       | 
-AKAZE     | BRISK       | x-x
-SIFT      | BRISK       | x-x
-SHITOMASI | BRIEF       | x-x
-HARRIS    | BRIEF       | x-x
-FAST      | BRIEF       | x-x
-BRISK     | BRIEF       | x-x
-ORB       | BRIEF       | x-x
-AKAZE     | BRIEF       | x-x
-SIFT      | BRIEF       | x-x
-SHITOMASI | ORB         | x-x
-HARRIS    | ORB         | x-x
-FAST      | ORB         | x-x
-BRISK     | ORB         | x-x
-ORB       | ORB         | x-x
-AKAZE     | ORB         | x-x
-SIFT      | ORB         | x-x
-SHITOMASI | FREAK       | x-x
-HARRIS    | FREAK       | x-x
-FAST      | FREAK       | x-x
-BRISK     | FREAK       | x-x
-ORB       | FREAK       | x-x
-AKAZE     | FREAK       | x-x
-SIFT      | FREAK       | x-x
-SHITOMASI | SIFT        | x-x
-HARRIS    | SIFT        | x-x
-FAST      | SIFT        | x-x
-BRISK     | SIFT        | x-x
-ORB       | SIFT        | x-x
-AKAZE     | SIFT        | x-x
-SIFT      | SIFT        | x-x
+Detector  | Descriptor  | Avg. number of matched keypoints | Standard deviation
+--------  | ----------- | -------------------------------- | ------------------
+SHITOMASI | BRISK       | 85                               | 5
+SHITOMASI | BRIEF       | 105                              | 5
+SHITOMASI | ORB         | 101                              | 3
+SHITOMASI | FREAK       | 85                               | 3
+SHITOMASI | SIFT        | 88                               | 5
+
+HARRIS    | BRISK       | 13                               | 4
+HARRIS    | BRIEF       | 16                               | 3
+HARRIS    | ORB         | 16                               | 4
+HARRIS    | FREAK       | 14                               | 3
+HARRIS    | SIFT        | 18                               | 5
+
+FAST      | BRISK       | 100                              | 7
+FAST      | BRIEF       | 122                              | 7
+FAST      | ORB         | 119                              | 6
+FAST      | FREAK       | 98                               | 6
+FAST      | SIFT        | 247                              | 10
+
+BRISK     | BRISK       | 174                              | 9
+BRISK     | BRIEF       | 189                              | 11
+BRISK     | ORB         | 168                              | 8
+BRISK     | FREAK       | 169                              | 9
+BRISK     | SIFT        | 151                              | 10
+
+ORB       | BRISK       | 83                               | 7
+ORB       | BRIEF       | 61                               | 14
+ORB       | ORB         | 85                               | 12
+ORB       | FREAK       | 47                               | 6
+ORB       | SIFT        | 57                               | 10
+
+AKAZE     | BRISK       | 135                              | 8
+AKAZE     | BRIEF       | 141                              | 9
+AKAZE     | ORB         | 131                              | 8
+AKAZE     | FREAK       | 132                              | 9
+AKAZE     | SIFT        | 120                              | 11
+
+SIFT      | BRISK       | 66                               | 6
+SIFT      | BRIEF       | 78                               | 7
+SIFT      | ORB         | 61                               | 6
+SIFT      | FREAK       | 66                               | 6
+SIFT      | SIFT        | 69                               | 7
 
 #### MP.9 Performance Evaluation 3
 - Log the time it takes for keypoint detection and descriptor extraction. The results must be entered into a spreadsheet and based on this data, the TOP3 detector / descriptor combinations must be recommended as the best choice for our purpose of detecting keypoints on vehicles.
