@@ -58,6 +58,8 @@ void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::Key
         }
         // EOF STUDENT TASK
     }
+
+    std::cout << "Matches size: "<< matches.size() << " with " << matcherType << " matcher and "<< selectorType << " selector"<<std::endl;
 }
 
 // Use one of several types of state-of-art descriptors to uniquely identify keypoints
