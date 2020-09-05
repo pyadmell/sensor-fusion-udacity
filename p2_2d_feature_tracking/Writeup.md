@@ -268,11 +268,11 @@ SIFT      | 1303-1462
 
 Detector  | Descriptor  | Number of matched keypoints
 --------  | ----------- | ---------------------------
-SHITOMASI | BRISK       | x-x
+SHITOMASI | BRISK       | 79-90
 HARRIS    | BRISK       | x-x
-FAST      | BRISK       | x-x
-BRISK     | BRISK       | x-x
-ORB       | BRISK       | x-x
+FAST      | BRISK       | 85-107
+BRISK     | BRISK       | 156-188
+ORB       | BRISK       | 
 AKAZE     | BRISK       | x-x
 SIFT      | BRISK       | x-x
 SHITOMASI | BRIEF       | x-x
