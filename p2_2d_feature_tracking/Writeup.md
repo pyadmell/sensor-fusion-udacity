@@ -308,12 +308,45 @@ SIFT      | SIFT        | 69                               | 7
 
 #### MP.9 Performance Evaluation 3
 - Log the time it takes for keypoint detection and descriptor extraction. The results must be entered into a spreadsheet and based on this data, the TOP3 detector / descriptor combinations must be recommended as the best choice for our purpose of detecting keypoints on vehicles.
+- The time log for all combinations and all images are provided in [MP_9.csv](MP_9.csv) files. The following table summarize the results in terms of average elapsed time and standard deviation.
 
-Detector     | Descriptor  | Avg. Number of Keypoints | Avg. Time (ms)
------------- | ----------- | ------------------------ | --------
-FAST-BRIEF   |             | x                        |  
-FAST-ORB     |             | x                        |  
-FAST-SIFT    |             | x                        | 
+Detector | Descriptor | Average (ms) | STD (ms)
+-------- | ---------- | ------------ | --------
+SHITOMASI | BRISK | 209.71 | 2.03
+SHITOMASI | BRIEF | 17.63 | 0.93
+SHITOMASI | ORB | 17.87 | 1.07
+SHITOMASI | FREAK | 42.71 | 0.70
+SHITOMASI | SIFT | 23.63 | 0.48
+HARRIS | BRISK | 238.04 | 6.48
+HARRIS | BRIEF | 15.08 | 2.38
+HARRIS | ORB | 15.53 | 2.42
+HARRIS | FREAK | 42.22 | 3.04
+HARRIS | SIFT | 25.05 | 2.68
+FAST | BRISK | 199.64 | 0.63
+FAST | BRIEF | 6.55 | 0.30
+FAST | ORB | 6.52 | 0.22
+FAST | FREAK | 34.44 | 0.58
+FAST | SIFT | 17.73 | 0.48
+BRISK | BRISK | 425.15 | 5.47
+BRISK | BRIEF | 228.94 | 3.27
+BRISK | ORB | 233.87 | 3.39
+BRISK | FREAK | 260.44 | 11.45
+BRISK | SIFT | 262.15 | 0.74
+ORB | BRISK | 204.25 | 0.69
+ORB | BRIEF | 10.96 | 0.25
+ORB | ORB | 14.75 | 0.42
+ORB | FREAK | 38.62 | 0.54
+ORB | SIFT | 20.30 | 0.25
+AKAZE | BRISK | 254.58 | 3.80
+AKAZE | BRIEF | 58.82 | 1.34
+AKAZE | ORB | 63.23 | 1.25
+AKAZE | FREAK | 85.04 | 2.38
+AKAZE | SIFT | 69.44 | 1.18
+SIFT | BRISK | 252.77 | 6.52
+SIFT | BRIEF | 69.74 | 4.83
+SIFT | ORB | 82.05 | 1.00
+SIFT | FREAK | 97.50 | 3.78
+SIFT | SIFT | 92.53 | 1.32
 
 Rank  |  Detector-Descriptor | Avg. Number of Keypoints | Avg. Time (ms)
 ----- | -------------------- | ------------------------ | --------
