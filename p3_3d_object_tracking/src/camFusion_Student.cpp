@@ -223,21 +223,9 @@ void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
     //// STUDENT ASSIGNMENT: FP.2
     double averageXPrev= std::accumulate(lidarPointsPrev.begin(),lidarPointsPrev.end(), 0.0,
         [](int sum, const LidarPoint &point){return sum+point.x;});
-    /*
-    for(const auto &point: lidarPointsPrev)
-    {
-        averageXPrev += point.x;
-    }
-    */
 
     double averageXCurr= std::accumulate(lidarPointsCurr.begin(),lidarPointsCurr.end(), 0.0,
         [](int sum, const LidarPoint &point){return sum+point.x;});
-    /*
-    for(const auto &point: lidarPointsCurr)
-    {
-        averageXCurr += point.x;
-    }
-    */
 
     if(!lidarPointsPrev.empty())
     {
@@ -315,20 +303,6 @@ void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bb
     {
         auto maxIt = std::max_element(matchingBoxScore[i], matchingBoxScore[i] + currBoxSize);
         bbBestMatches[i] = std::distance(matchingBoxScore[i], maxIt);
-        /*
-        size_t maxScore = 0;
-        size_t bestIndx = 0;
-        for(size_t j=0; j<currBoxSize; ++j)
-        {
-            if(matchingBoxScore[i][j] > maxScore)
-            {
-                maxScore = matchingBoxScore[i][j];
-                bestIndx = j;
-            }
-        }
-
-        bbBestMatches[i] = bestIndx;
-        */
     }
    //// EOF STUDENT ASSIGNMENT
 }
