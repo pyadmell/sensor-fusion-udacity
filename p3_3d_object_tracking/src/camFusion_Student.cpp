@@ -137,18 +137,19 @@ void show3DObjects(std::vector<BoundingBox> &boundingBoxes, cv::Size worldSize, 
 void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPoint> &kptsCurr, std::vector<cv::DMatch> &kptMatches)
 {
 // STUDENT ASSIGMENT: FP.3
-    std::vector<double> distance;
+    std::vector<double> dist;
     for(const auto &point: kptMatches)
     {
         auto kptCurr = kptsCurr[point.trainIdx];
         if (boundingBox.roi.contains(kptCurr.pt))
         {
             auto &kptPrev = kptsPrev[point.queryIdx];
-            distance.push_back(cv::norm(kptCurr.pt - kptPrev.pt));
+            dist.push_back(cv::norm(kptCurr.pt - kptPrev.pt));
         }
 	  }
 
-    double meanDistance = std::accumulate(distance.begin(), distance.end(), 0.0)/distance.size();
+    double meanDistance = std::accumulate(dist.begin(), dist.end(), 0.0);
+    meanDistance /= static_cast<double>(dist.size());
 
     for (const auto &point: kptMatches)
     {
@@ -218,18 +219,24 @@ void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPo
 void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
                      std::vector<LidarPoint> &lidarPointsCurr, double frameRate, double &TTC)
 {
-// STUDENT ASSIGNMENT: FP.2
-    double averageXPrev= 0.0;
+    //// STUDENT ASSIGNMENT: FP.2
+    double averageXPrev= std::accumulate(lidarPointsPrev.begin(),lidarPointsPrev.end(), 0.0,
+        [](int sum, const LidarPoint &point){return sum+point.x;});
+    /*
     for(const auto &point: lidarPointsPrev)
     {
         averageXPrev += point.x;
     }
+    */
 
-    double averageXCurr= 0.0;
+    double averageXCurr= std::accumulate(lidarPointsCurr.begin(),lidarPointsCurr.end(), 0.0,
+        [](int sum, const LidarPoint &point){return sum+point.x;});
+    /*
     for(const auto &point: lidarPointsCurr)
     {
         averageXCurr += point.x;
     }
+    */
 
     if(!lidarPointsPrev.empty())
     {
@@ -242,17 +249,18 @@ void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
     }
 
     double minXCurr= HUGE_VAL;
+    double threshold = 0.75*averageXCurr;
     for (const auto &point: lidarPointsCurr)
     {
-        if (point.x>0.0 && point.x> 0.75*averageXCurr)
+        if (point.x>0.0 && point.x>threshold)
         {
-          minXCurr = point.x;
+            minXCurr = point.x;
         }
     }
 
     double dT= 1.0/frameRate;
     TTC = (minXCurr * dT) / (averageXPrev - averageXCurr);
-// EOF STUDENT ASSIGNMENT
+    //// EOF STUDENT ASSIGNMENT
 }
 
 
