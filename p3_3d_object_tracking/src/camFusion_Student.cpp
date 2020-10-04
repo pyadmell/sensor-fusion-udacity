@@ -136,7 +136,7 @@ void show3DObjects(std::vector<BoundingBox> &boundingBoxes, cv::Size worldSize, 
 // associate a given bounding box with the keypoints it contains
 void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPoint> &kptsCurr, std::vector<cv::DMatch> &kptMatches)
 {
-// STUDENT ASSIGMENT: FP.3
+    //// STUDENT ASSIGMENT: FP.3
     std::vector<double> dist;
     for(const auto &point: kptMatches)
     {
@@ -165,7 +165,7 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
             }
         }
     }
-// EOF STUDENT ASSIGMENT
+    //// EOF STUDENT ASSIGMENT
 }
 
 
@@ -173,15 +173,13 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
 void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPoint> &kptsCurr, 
                       std::vector<cv::DMatch> kptMatches, double frameRate, double &TTC, cv::Mat *visImg)
 {
-// STUDENT ASSIGNMENT: FP.4
+    //// STUDENT ASSIGNMENT: FP.4
     std::vector<double> distanceRatios;
     double minDistance = 100.0; // Minimum required distance
-
     for (auto itOut=kptMatches.begin(); itOut!=kptMatches.end()-1; ++itOut)
     {
         cv::KeyPoint kpOuterCurr = kptsCurr[itOut->trainIdx];
         cv::KeyPoint kpOuterPrev = kptsPrev[itOut->queryIdx];
-
         for (auto itIn=kptMatches.begin()+1; itIn!=kptMatches.end(); ++itIn)
         {
             cv::KeyPoint kpInnerCurr = kptsCurr[itIn->trainIdx];
@@ -195,10 +193,12 @@ void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPo
         }
     }
 
-    if (distanceRatios.empty()) {
+    if (distanceRatios.empty()) 
+    {
         TTC = NAN;
         return;
     }
+
     std::sort(distanceRatios.begin(), distanceRatios.end());
     size_t medianIndex = distanceRatios.size()/2.0;
     double medianDistRatio;
@@ -210,9 +210,10 @@ void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPo
     {
         medianDistRatio = distanceRatios[medianIndex];
     }
+
     double dT = 1.0/frameRate;
     TTC = -dT/(1.0 - medianDistRatio);
-// EOF STUDENT ASSIGNMENT
+    //// EOF STUDENT ASSIGNMENT
 }
 
 
