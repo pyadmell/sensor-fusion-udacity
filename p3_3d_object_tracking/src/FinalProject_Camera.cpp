@@ -25,6 +25,17 @@ using namespace std;
 /* MAIN PROGRAM */
 int main(int argc, const char *argv[])
 {
+    string detectorType = "SHITOMASI"; // SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE, SIFT
+    string descriptorType = "BRISK";   // BRIEF, ORB, FREAK, AKAZE, SIFT
+    if (argc == 2)
+    {
+        detectorType = argv[1]; 
+    }
+    else if (argc == 3)
+    {
+        detectorType = argv[1];
+        descriptorType = argv[2];
+    }
     /* INIT VARIABLES AND DATA STRUCTURES */
 
     // data location
@@ -150,8 +161,8 @@ int main(int argc, const char *argv[])
 
         // extract 2D keypoints from current image
         vector<cv::KeyPoint> keypoints; // create empty feature list for current image
-        string detectorType = "SHITOMASI";
 
+        //// STUDENT TASK: UPDATE BASED ON MIDTERM
         if (detectorType.compare("SHITOMASI") == 0)
         {
             detKeypointsShiTomasi(keypoints, imgGray, false);
@@ -166,6 +177,7 @@ int main(int argc, const char *argv[])
             // Other methods: FAST, BRISK, ORB, AKAZE, SIFT
             detKeypointsModern(keypoints, imgGray, detectorType, false);
         }
+        //// END STUDENT TASK
 
         // optional : limit number of keypoints (helpful for debugging and learning)
         bool bLimitKpts = false;
@@ -190,8 +202,9 @@ int main(int argc, const char *argv[])
         /* EXTRACT KEYPOINT DESCRIPTORS */
 
         cv::Mat descriptors;
-        string descriptorType = "BRISK"; // BRISK, BRIEF, ORB, FREAK, AKAZE, SIFT
+        //// STUDENT TASK: UPDATE BASED ON MIDTERM
         descKeypoints((dataBuffer.end() - 1)->keypoints, (dataBuffer.end() - 1)->cameraImg, descriptors, descriptorType);
+        //// END STUDENT TASK
 
         // push descriptors for current frame to end of data buffer
         (dataBuffer.end() - 1)->descriptors = descriptors;
@@ -203,16 +216,17 @@ int main(int argc, const char *argv[])
         {
 
             /* MATCH KEYPOINT DESCRIPTORS */
-
+            ////STUDENT TASK: UPDATE BASED ON MIDTERM
             vector<cv::DMatch> matches;
             string matcherType = "MAT_BF";        // MAT_BF, MAT_FLANN
-            string descriptorType = "DES_BINARY"; // DES_BINARY, DES_HOG
-            string selectorType = "SEL_NN";       // SEL_NN, SEL_KNN
+            string descriptorType = (detectorType.compare("SIFT") == 0) ? "DES_HOG" : "DES_BINARY"; // DES_BINARY, DES_HOG
+            string selectorType = "SEL_KNN";       // SEL_NN, SEL_KNN
 
             matchDescriptors((dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints,
                              (dataBuffer.end() - 2)->descriptors, (dataBuffer.end() - 1)->descriptors,
                              matches, descriptorType, matcherType, selectorType);
 
+            //// END STUDENT TASK
             // store matches in current data frame
             (dataBuffer.end() - 1)->kptMatches = matches;
 
