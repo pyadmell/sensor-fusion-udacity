@@ -258,7 +258,7 @@ void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
 
 void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bbBestMatches, DataFrame &prevFrame, DataFrame &currFrame)
 {
-// STUDENT ASSIGNMENT: FP.1
+    //// STUDENT ASSIGNMENT: FP.1
     size_t prevBoxSize = prevFrame.boundingBoxes.size();
     size_t currBoxSize = currFrame.boundingBoxes.size();
     size_t matchingBoxScore[prevBoxSize][currBoxSize];
@@ -268,6 +268,8 @@ void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bb
     {
         cv::KeyPoint prevKpnt = prevFrame.keypoints[match.queryIdx];
         cv::Point prevPoint = cv::Point(prevKpnt.pt.x, prevKpnt.pt.y);
+        
+        // filter points out of roi
         std::vector<size_t> prevBoxIds;
         for(size_t i=0; i<prevBoxSize; ++i)
         {
@@ -279,6 +281,8 @@ void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bb
 
         cv::KeyPoint currKpnt = currFrame.keypoints[match.trainIdx];
         cv::Point currPoint = cv::Point(currKpnt.pt.x, currKpnt.pt.y);
+        
+        // filter points out of roi
         std::vector<size_t> currBoxIds;
         for(size_t i=0; i<currBoxSize; ++i)
         {
@@ -288,6 +292,7 @@ void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bb
             }
         }
 
+        // find matching score between prev and curr
         for(auto const &i: prevBoxIds)
         {
             for(auto const &j: currBoxIds)
@@ -299,8 +304,11 @@ void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bb
 
     for(size_t i=0; i<prevBoxSize; ++i) 
     {
-        int maxScore = 0;
-        int bestIndx = 0;
+        auto maxIt = std::max_element(matchingBoxScore[i], matchingBoxScore[i] + currBoxSize);
+        bbBestMatches[i] = std::distance(matchingBoxScore[i], maxIt);
+        /*
+        size_t maxScore = 0;
+        size_t bestIndx = 0;
         for(size_t j=0; j<currBoxSize; ++j)
         {
             if(matchingBoxScore[i][j] > maxScore)
@@ -311,6 +319,7 @@ void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bb
         }
 
         bbBestMatches[i] = bestIndx;
+        */
     }
-// EOF STUDENT ASSIGNMENT
+   //// EOF STUDENT ASSIGNMENT
 }
