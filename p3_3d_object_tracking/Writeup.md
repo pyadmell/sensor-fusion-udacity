@@ -202,6 +202,15 @@ void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPo
 ### FP.5 Performance Evaluation 1
 
 - Find examples where the TTC estimate of the Lidar sensor does not seem plausible. Describe your observations and provide a sound argumentation why you think this happened.
+- Initially, some TTC estimations were way off, and TTC could go up to 40 s. But the result became more consistent after filtering out the out of lane points. However, some jumps in TTC estimations are still present, for example, in frames (1-4) and (15-18), where TTC changes about 3 seconds between two consecutive frames, increasing from 13 s to 16 s and returning to 14 s, while visually the distance seems to be decreasing. This is more apparent in frames 15-18. The difference might have resulted from the frame rate, which is assumed to be constant.
+
+| Frame 1-2 | Frame 2-3 | Frame 3-4|
+|----|----|----|
+| ![](./images/performance_evaluation_1/lidar_1.png) | ![](./images/performance_evaluation_1/lidar_2.png) | ![](./images/performance_evaluation_1/lidar_3.png) |
+
+| Frame 15-16 | Frame 16-17 | Frame 17-18|
+|----|----|----|
+| ![](./images/performance_evaluation_1/lidar_4.png) | ![](./images/performance_evaluation_1/lidar_5.png) | ![](./images/performance_evaluation_1/lidar_6.png) |
 
 ### FP.6 Performance Evaluation 2
 
