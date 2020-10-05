@@ -25,8 +25,8 @@ using namespace std;
 /* MAIN PROGRAM */
 int main(int argc, const char *argv[])
 {
-    string detectorType = "SHITOMASI"; // SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE, SIFT
-    string descriptorType = "BRISK";   // BRIEF, ORB, FREAK, AKAZE, SIFT
+    string detectorType = "FAST"; // SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE, SIFT
+    string descriptorType = "BRIEF";   // BRIEF, ORB, FREAK, AKAZE, SIFT
     if (argc == 2)
     {
         detectorType = argv[1]; 
@@ -104,7 +104,7 @@ int main(int argc, const char *argv[])
         frame.cameraImg = img;
         dataBuffer.push_back(frame);
 
-        cout << "#1 : LOAD IMAGE INTO BUFFER done" << endl;
+        cout << "#1 : LOAD IMAGE "<< imgIndex << " INTO BUFFER done" << endl;
 
 
         /* DETECT & CLASSIFY OBJECTS */
@@ -271,6 +271,7 @@ int main(int argc, const char *argv[])
                 }
 
                 // compute TTC for current match
+                // std::cout<<"currBB size: "<<currBB->lidarPoints.size()<<" prevBB size: " << prevBB->lidarPoints.size()<<std::endl;
                 if( currBB->lidarPoints.size()>0 && prevBB->lidarPoints.size()>0 ) // only compute TTC if we have Lidar points
                 {
                     //// STUDENT ASSIGNMENT
@@ -297,6 +298,7 @@ int main(int argc, const char *argv[])
                         char str[200];
                         sprintf(str, "TTC Lidar : %f s, TTC Camera : %f s", ttcLidar, ttcCamera);
                         putText(visImg, str, cv::Point2f(80, 50), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0,0,255));
+                        std::cout<<str<<std::endl;
 
                         string windowName = "Final Results : TTC";
                         cv::namedWindow(windowName, 4);

@@ -29,11 +29,11 @@ void clusterLidarWithROI(std::vector<BoundingBox> &boundingBoxes, std::vector<Li
         // project Lidar point into camera
         Y = P_rect_xx * R_rect_xx * RT * X;
         cv::Point pt;
-        //pt.x = Y.at<double>(0, 0) / Y.at<double>(0, 2); // pixel coordinates
-        //pt.y = Y.at<double>(1, 0) / Y.at<double>(0, 2);
+        pt.x = Y.at<double>(0, 0) / Y.at<double>(0, 2); // pixel coordinates
+        pt.y = Y.at<double>(1, 0) / Y.at<double>(0, 2);
         
-        pt.x = Y.at<double>(0, 0) / Y.at<double>(2, 0); // pixel coordinates
-        pt.y = Y.at<double>(1, 0) / Y.at<double>(2, 0);
+        //pt.x = Y.at<double>(0, 0) / Y.at<double>(2, 0); // pixel coordinates
+        //pt.y = Y.at<double>(1, 0) / Y.at<double>(2, 0);
 
         vector<vector<BoundingBox>::iterator> enclosingBoxes; // pointers to all bounding boxes which enclose the current Lidar point
         for (vector<BoundingBox>::iterator it2 = boundingBoxes.begin(); it2 != boundingBoxes.end(); ++it2)
@@ -200,7 +200,7 @@ void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPo
     }
 
     std::sort(distanceRatios.begin(), distanceRatios.end());
-    size_t medianIndex = distanceRatios.size()/2.0;
+    size_t medianIndex = distanceRatios.size()/2;
     double medianDistRatio;
     if (distanceRatios.size()%2 == 0)
     {
@@ -221,34 +221,35 @@ void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
                      std::vector<LidarPoint> &lidarPointsCurr, double frameRate, double &TTC)
 {
     //// STUDENT ASSIGNMENT: FP.2
-    double averageXPrev= std::accumulate(lidarPointsPrev.begin(),lidarPointsPrev.end(), 0.0,
-        [](int sum, const LidarPoint &point){return sum+point.x;});
-
-    double averageXCurr= std::accumulate(lidarPointsCurr.begin(),lidarPointsCurr.end(), 0.0,
-        [](int sum, const LidarPoint &point){return sum+point.x;});
-
-    if(!lidarPointsPrev.empty())
+    size_t numInLane = 0;
+    auto sumPointsInLane = [&](double sum, const LidarPoint &point)
     {
-        averageXPrev /= static_cast<double>(lidarPointsPrev.size());
-    }
+      double laneWidth = 3.5;
+      if(std::fabs(point.y) <= laneWidth/2.0 && point.x>0.0)
+      {
+        numInLane++;
+        return sum+point.x;
+      }
+      return sum;
+    };
     
-    if(!lidarPointsCurr.empty())
+    numInLane = 0;
+    double averageXPrev= std::accumulate(lidarPointsPrev.begin(),lidarPointsPrev.end(), 0.0, sumPointsInLane);
+    if(numInLane>0)
     {
-        averageXCurr /= static_cast<double>(lidarPointsCurr.size());
+        averageXPrev /= static_cast<double>(numInLane);
     }
 
-    double minXCurr= HUGE_VAL;
-    double threshold = 0.75*averageXCurr;
-    for (const auto &point: lidarPointsCurr)
+    numInLane = 0;
+    double averageXCurr= std::accumulate(lidarPointsCurr.begin(),lidarPointsCurr.end(), 0.0,
+        sumPointsInLane);
+    if(numInLane>0)
     {
-        if (point.x>0.0 && point.x>threshold)
-        {
-            minXCurr = point.x;
-        }
+        averageXCurr /= static_cast<double>(numInLane);
     }
 
     double dT= 1.0/frameRate;
-    TTC = (minXCurr * dT) / (averageXPrev - averageXCurr);
+    TTC = (averageXCurr * dT) / (averageXPrev - averageXCurr);
     //// EOF STUDENT ASSIGNMENT
 }
 
@@ -258,7 +259,14 @@ void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bb
     //// STUDENT ASSIGNMENT: FP.1
     size_t prevBoxSize = prevFrame.boundingBoxes.size();
     size_t currBoxSize = currFrame.boundingBoxes.size();
-    size_t matchingBoxScore[prevBoxSize][currBoxSize];
+    int matchingBoxScore[prevBoxSize][currBoxSize];
+    for(size_t i=0;i<prevBoxSize;++i)
+    {
+      for(size_t j=0; j<currBoxSize;++j)
+      {
+        matchingBoxScore[i][j]=0;
+      }
+    }
 
     // iterate pnt matchs, cnt box-box match score
     for(const auto &match: matches)
