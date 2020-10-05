@@ -216,8 +216,18 @@ void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPo
 
 - Run several detector / descriptor combinations and look at the differences in TTC estimation. Find out which methods perform best and also include several examples where camera-based TTC estimation is way off. As with Lidar, describe your observations again and also look into potential reasons.
 - The results for all detector/descriptor combinations are reported in the [FP_6_Performance_Evaluation_2.csv](./FP_6_Performance_Evaluation_2.csv) spreadsheet.
+- In the midterm project, the top 3 detector/descriptor combinations were seletected as follows based on their accuracy and speed. 
+
+| Rank | Detector | Descriptor |
+| ---- | -------- | ---------- |
+| 1    | FAST     | BRIEF      |
+| 2    | FAST     | ORB        |
+| 3    | FAST     | SIFT       |
+
+- Comparing the lidar TTC and camera TTC, the above combinations result in the same level of accuracy and consistency. The difference between the camera and lidar estimations is also less compared to other combinations.
+- The camera TTC estimation is less consistent and less accurate compared to lidar TTC. It seems that this is related to finding some matched points on the ground or on other vehicles.
 
 | Frame 7-8 | Frame 8-9 | Frame 11-12|
 |----|----|----|
-| ![](./images/performance_evaluation_2/0000000008.png) | ![](./images/performance_evaluation_2/0000000009.png) | ![](./images/performance_evaluation_2/00000000012.png) |
+| ![](./images/performance_evaluation_2/0000000008.png) | ![](./images/performance_evaluation_2/0000000009.png) | ![](./images/performance_evaluation_2/0000000012.png) |
 
