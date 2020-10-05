@@ -125,6 +125,12 @@ void show3DObjects(std::vector<BoundingBox> &boundingBoxes, cv::Size worldSize, 
     string windowName = "3D Objects";
     cv::namedWindow(windowName, 1);
     cv::imshow(windowName, topviewImg);
+    static int imgNumber = 0;
+    string folderName = "../img/";
+    string saveImgFullFilename = folderName + "/Lidar_000000" + to_string(imgNumber) + ".png";
+    const char *cp_saveImgFullFilename = saveImgFullFilename.c_str();
+    cv::imwrite(cp_saveImgFullFilename, topviewImg);
+    imgNumber++;
 
     if(bWait)
     {
