@@ -54,6 +54,36 @@ UKF::UKF() {
    * TODO: Complete the initialization. See ukf.h for other member properties.
    * Hint: one or more values initialized above might be wildly off...
    */
+  
+  // set number of states
+  n_x_ = 5;
+
+  // Lambda parameter
+  lambda_ = 3 - n_x_;
+  
+  // Augmented state size
+  n_aug_ = n_x_ + 2;
+  
+  // Initialize predicted sigma points matrix
+  auto sigma_size = 2 * n_aug_ + 1;
+  Xsig_pred_ = MatrixXd(n_x_, sigma_size);  
+  Xsig_pred_.setZero();
+  
+  // Set weights 
+  weights_ = VectorXd(sigma_size);
+  weights_.setConstant(0.5 / (lambda_ + n_aug_));
+  weights_(0) = lambda_ / (lambda_ + n_aug_);
+
+  // Init lidar measurement noise covariance matrix
+  R_lidar_ = MatrixXd(2, 2);
+  R_lidar_ << std_laspx_*std_laspx_, 0.0,
+              0.0, std_laspy_*std_laspy_;
+
+  // Init radar measurement noise covariance matrix
+  R_radar_ = MatrixXd(3, 3);
+  R_radar_ << std_radr_*std_radr_, 0.0, 0.0,
+              0.0, std_radphi_*std_radphi_, 0.0,
+              0.0, 0.0, std_radrd_*std_radrd_;
 }
 
 UKF::~UKF() {}
@@ -63,6 +93,53 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
    * TODO: Complete this function! Make sure you switch between lidar and radar
    * measurements.
    */
+  if (!is_initialized_)
+  {
+    // Initialize x_ = [px, py, v, psi, psi_dot]
+    if (meas_package.sensor_type_ == MeasurementPackage::LASER)
+    {
+      x_ << meas_package.raw_measurements_[0], meas_package.raw_measurements_[1], 0.0, 0.0, 0.0;
+    } 
+    else if (meas_package.sensor_type_ == MeasurementPackage::RADAR)
+    {
+      double rho = meas_package.raw_measurements_[0];
+      double phi = meas_package.raw_measurements_[1];
+      double rho_dot = meas_package.raw_measurements_[2];
+
+      x_ << rho * cos(phi), rho * sin(phi), 0.0, 0.0, 0.0;
+    }
+    else
+    {
+      x_.setZero();
+    }
+    time_us_ = meas_package.timestamp_;
+    is_initialized_ = true;
+    return;
+  }
+
+  // dt in second
+  double dt = static_cast<double>((meas_package.timestamp_ - time_us_) * 1e-6);
+
+  // Prediction
+  Prediction(dt);
+
+  // Update
+  if (meas_package.sensor_type_ == MeasurementPackage::LASER)
+  {
+    UpdateLidar(meas_package);
+  } 
+  else if (meas_package.sensor_type_ == MeasurementPackage::RADAR)
+  {
+    UpdateRadar(meas_package);
+  }
+  else
+  {
+    std::cout<<">>>> Sensor type is invalid!"<< std::endl;
+    return;
+  }
+ 
+  // Update time if sensor type is valid
+  time_us_ = meas_package.timestamp_;
 }
 
 void UKF::Prediction(double delta_t) {
