@@ -21,15 +21,15 @@ UKF::UKF() {
   P_ = MatrixXd(5, 5);
 
   // Process noise standard deviation longitudinal acceleration in m/s^2 
-  // maximum acceleration/deceleration ~= 5.0 m/s^2 
+  // maximum acceleration/deceleration < 6.0 m/s^2 
   // Ref: Bokare, P. S., & Maurya, A. K. (2017). Acceleration-deceleration behaviour of various vehicle types. 
   // Transportation research procedia, 25, 4733-4749.
-  std_a_ = 5.0;//0.5*5.0; // 30;
+  std_a_ = 6.0; // 30;
 
   // Process noise standard deviation yaw acceleration in rad/s^2
   // maximum yaw rate = 30 deg/s
-  // maximum yawdd = 60 deg/s assuming 0.5 second to reach the maximum rate
-  std_yawdd_ = 0.5*60.0*M_PI/180.0; // 30; 
+  // maximum yawdd = 120 deg/s^2 assuming 0.25 second to reach the maximum rate
+  std_yawdd_ = 0.5*120.0*M_PI/180.0; // 30; 
   
   /**
    * DO NOT MODIFY measurement noise values below.
